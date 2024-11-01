@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qr_generator/qr_image.dart';
 
 class GenerateQRCode extends StatefulWidget {
   const GenerateQRCode({super.key});
@@ -8,6 +9,22 @@ class GenerateQRCode extends StatefulWidget {
 }
 
 class _GenerateQRCodeState extends State<GenerateQRCode> {
+  late final TextEditingController _textEditingController;
+  bool isGenerated = false;
+  String qrData = "";
+
+  @override
+  void initState() {
+    _textEditingController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,10 +33,12 @@ class _GenerateQRCodeState extends State<GenerateQRCode> {
         title: const Text("Generate QR Code"),
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
+              controller: _textEditingController,
               decoration: InputDecoration(
                 labelText: "Enter the data to encode",
                 border: const OutlineInputBorder(),
@@ -34,6 +53,10 @@ class _GenerateQRCodeState extends State<GenerateQRCode> {
               ),
             ),
           ),
+          QRImageBox(
+            qrData: qrData,
+            isGenerated: isGenerated,
+          ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               foregroundColor: const Color(0xFFECEFF1),
@@ -44,7 +67,13 @@ class _GenerateQRCodeState extends State<GenerateQRCode> {
               ),
               side: BorderSide(color: Theme.of(context).colorScheme.onPrimary),
             ),
-            onPressed: () {},
+            onPressed: () {
+              setState(() {
+                qrData = _textEditingController.text;
+                isGenerated = true;
+                _textEditingController.clear();
+              });
+            },
             child: const Text("Generate QR Code"),
           ),
         ],
